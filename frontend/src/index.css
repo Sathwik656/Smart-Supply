@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-gray-900 bg-gray-50/50 transition-colors duration-300;
+  }
+}
+
+/* Custom scrollbar for dark/light mode */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full dark:bg-gray-600/80;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Page transitions */
+.fade-in {
+  @apply animate-fade-in-up;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-md border border-white/40 dark:bg-dark-800/80 dark:border-dark-700/50 shadow-soft;
+}
+
+.glass-card {
+  @apply bg-white/90 backdrop-blur-sm border border-gray-100 dark:bg-dark-800/90 dark:border-dark-700/50 shadow-soft hover:shadow-lg transition-all duration-300;
+}
