@@ -10,16 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@deck.gl/core": "^8.9.0",
-    "@deck.gl/layers": "^8.9.0",
-    "@deck.gl/react": "^8.9.0",
     "@tanstack/react-query": "^5.0.0",
     "axios": "^1.6.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.300.0",
-    "mapbox-gl": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-map-gl": "^7.1.0",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.20.0",
     "recharts": "^2.10.0",
     "socket.io-client": "^4.7.0",

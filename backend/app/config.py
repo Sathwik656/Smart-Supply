@@ -7,7 +7,6 @@ class Settings(BaseSettings):
     redis_url: str
     secret_key: str
     openweather_api_key: Optional[str] = None
-    mapbox_access_token: Optional[str] = None
     ors_api_key: Optional[str] = None
     twilio_account_sid: Optional[str] = None
     twilio_auth_token: Optional[str] = None

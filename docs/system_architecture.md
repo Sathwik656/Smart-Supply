@@ -46,7 +46,7 @@ The Beat process is the timekeeper. It triggers specific tasks based on a define
 The Worker process picks up the tasks scheduled by Beat from the **Redis queue** and executes them.
 
 #### Step-by-Step Execution of a Routine Polling Cycle:
-1.  **Data Ingestion**: The worker queries external APIs (e.g., OpenWeatherMap, Mapbox/ORS) for active shipments.
+1.  **Data Ingestion**: The worker queries external APIs (e.g., OpenWeatherMap, OpenRouteService) for active shipments.
 2.  **Database Update**: The worker updates the MongoDB `Shipment` records with the latest weather condition and current geographical coordinates.
 3.  **Real-Time Broadcast**: The worker triggers a WebSocket event. The FastAPI server broadcasts this update to the React frontend, and the Live Map marker moves instantly.
 

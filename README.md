@@ -12,7 +12,7 @@ IoT / Simulator =>   FastAPI => MongoDB (Beanie)
 WebSockets <=====  FastAPI <====   ML Models (loaded from Joblib/MLflow)
 (live alerts)        (WS)
 
-Frontend (React + Vite, Zustand, Tailwind, Mapbox GL) => User Dashboard
+Frontend (React + Vite, Zustand, Tailwind, Leaflet) => User Dashboard
 ```
 
 ## Prerequisites
@@ -22,7 +22,6 @@ Frontend (React + Vite, Zustand, Tailwind, Mapbox GL) => User Dashboard
 - **MongoDB Server** (running locally on port 27017 or remote)
 - **Redis Server** (running locally on port 6379 or remote)
 - API Keys configured in `.env` (Rename `.env.example` to `.env` and fill them)
-  - Mapbox Access Token (critical for frontend map rendering)
   - OpenWeatherMap API Key
   - OpenRouteService API Key (optional, mocked)
   - Twilio and SendGrid credentials (optional, mocked)
@@ -35,7 +34,7 @@ Ensure MongoDB and Redis are running locally before starting the components.
 ```bash
 cd smart-supply-chain
 cp .env.example .env
-# Edit .env and supply your Mapbox key
+# Edit .env and supply your API keys
 ```
 
 ### 2. Backend API Setup
