@@ -41,6 +41,15 @@ app.include_router(api_router, prefix="/api")
 # Mount Socket.IO
 app.mount("/ws/socket.io", sio_app)
 
+@app.get("/")
+async def root():
+    return {
+        "status": "ok",
+        "service": "Smart Supply Chain API",
+        "health": "/api/health",
+        "docs": "/docs",
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "message": "Smart Supply Chain API is running."}
