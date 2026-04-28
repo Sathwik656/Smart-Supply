@@ -14,7 +14,6 @@ class RegisterRequest(BaseModel):
     username: str
     email: str
     password: str
-    role: str = "operator"
 
 class Token(BaseModel):
     access_token: str
@@ -27,16 +26,18 @@ class UserResponse(BaseModel):
 
 @router.post("/register", response_model=UserResponse)
 async def register(req: RegisterRequest):
-    # In a real app we might restrict this to admins
     exists = await User.find_one(User.username == req.username)
     if exists:
         raise HTTPException(status_code=400, detail="Username already registered")
+    email_exists = await User.find_one(User.email == req.email)
+    if email_exists:
+        raise HTTPException(status_code=400, detail="Email already registered")
         
     user = User(
         username=req.username,
         email=req.email,
         hashed_password=get_password_hash(req.password),
-        role=req.role
+        role="operator"
     )
     await user.insert()
     return UserResponse(username=user.username, email=user.email, role=user.role)

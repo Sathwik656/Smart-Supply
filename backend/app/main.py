@@ -32,6 +32,7 @@ app = FastAPI(title="Smart Supply Chain API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.frontend_origins,
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

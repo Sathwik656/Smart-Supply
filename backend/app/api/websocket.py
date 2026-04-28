@@ -1,7 +1,5 @@
 import socketio
 
-from app.config import settings
-
 # We use an AsyncServer for FastAPI
 # Disable Socket.IO's own CORS headers so FastAPI's middleware can be the
 # single source of truth for HTTP polling requests.

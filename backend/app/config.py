@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     @property
     def frontend_origins(self) -> list[str]:
         origins = [origin.strip().rstrip("/") for origin in self.frontend_url.split(",") if origin.strip()]
-        return origins or ["http://localhost:3000"]
+        defaults = ["http://localhost:3000", "http://localhost:5173"]
+        return list(dict.fromkeys([*origins, *defaults]))
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import List, Optional
 from datetime import datetime, timedelta
-from app.services.auth import get_current_user
+from app.services.auth import get_current_user, require_roles
 
 router = APIRouter(prefix="/mock", tags=["mock"])
 
@@ -447,7 +447,7 @@ async def get_mock_settings_category(
 @router.patch("/settings")
 async def update_mock_settings(
     settings: dict,
-    current_user = Depends(get_current_user)
+    current_user = Depends(require_roles("admin"))
 ):
     """Update mock settings (simulated)"""
     # In a real app, this would save to database

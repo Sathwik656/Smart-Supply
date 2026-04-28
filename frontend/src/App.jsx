@@ -1,7 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
+import ProtectedRoute from './components/layout/ProtectedRoute';
 import Sidebar from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
 
+import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ShipmentsPage from './pages/ShipmentsPage';
 import ShipmentDetailPage from './pages/ShipmentDetailPage';
@@ -11,6 +14,8 @@ import VehiclesPage from './pages/VehiclesPage';
 import SettingsPage from './pages/SettingsPage';
 
 function AppLayout() {
+  const { isAdmin } = useAuth();
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-dark-900 transition-colors duration-200">
       <Sidebar />
@@ -24,7 +29,7 @@ function AppLayout() {
             <Route path="/alerts" element={<AlertsPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/vehicles" element={<VehiclesPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/settings" element={isAdmin ? <SettingsPage /> : <Navigate to="/dashboard" replace />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
@@ -34,11 +39,25 @@ function AppLayout() {
 }
 
 function App() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div className="flex h-screen items-center justify-center text-gray-500">Loading application...</div>;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/*" element={<AppLayout />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage mode="login" />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage mode="register" />} />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

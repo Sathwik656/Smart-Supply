@@ -1,11 +1,14 @@
-import { Menu, Bell, Sun, Moon } from 'lucide-react';
+import { Menu, Bell, Sun, Moon, LogOut } from 'lucide-react';
 import { useUIStore } from '../../store/uiStore';
 import { useAlertStore } from '../../store/alertStore';
+import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 
 const TopBar = () => {
   const { toggleSidebar, darkMode, toggleDarkMode } = useUIStore();
   const unreadCount = useAlertStore(state => state.unreadCount);
+  const { user, logout } = useAuth();
+  const initial = user?.username?.[0]?.toUpperCase() || 'U';
 
   return (
     <header className="h-16 bg-white/80 dark:bg-dark-800/80 backdrop-blur-md border-b border-gray-200 dark:border-dark-700 flex items-center justify-between px-6 z-20 sticky top-0 shadow-soft">
@@ -32,9 +35,19 @@ const TopBar = () => {
 
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold">
-            G
+            {initial}
           </div>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Guest</span>
+          <div className="hidden sm:block leading-tight">
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.username}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</div>
+          </div>
+          <button
+            onClick={logout}
+            className="p-2 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+            title="Log out"
+          >
+            <LogOut size={18} />
+          </button>
         </div>
       </div>
     </header>

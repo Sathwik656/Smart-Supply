@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from beanie.odm.operators.find.evaluation import RegEx
 from app.models.shipment import Shipment, Location, PositionQuery
-from app.services.auth import get_current_user
+from app.services.auth import get_current_user, require_roles, require_admin
 from app.api.websocket import broadcast_shipment_update
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
@@ -42,7 +42,7 @@ async def get_shipment(shipment_id: str, current_user = Depends(get_current_user
     return shipment
 
 @router.post("/", response_model=Shipment)
-async def create_shipment(req: ShipmentCreate, current_user = Depends(get_current_user)):
+async def create_shipment(req: ShipmentCreate, current_user = Depends(require_roles("admin", "operator"))):
     exists = await Shipment.find_one(Shipment.shipment_id == req.shipment_id)
     if exists:
         raise HTTPException(status_code=400, detail="Shipment already exists")
@@ -62,7 +62,7 @@ async def create_shipment(req: ShipmentCreate, current_user = Depends(get_curren
     return shipment
 
 @router.patch("/{shipment_id}", response_model=Shipment)
-async def update_shipment(shipment_id: str, req: dict, current_user = Depends(get_current_user)):
+async def update_shipment(shipment_id: str, req: dict, current_user = Depends(require_roles("admin", "operator"))):
     shipment = await Shipment.find_one(Shipment.shipment_id == shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
@@ -85,7 +85,7 @@ async def update_shipment(shipment_id: str, req: dict, current_user = Depends(ge
     return shipment
 
 @router.delete("/{shipment_id}")
-async def delete_shipment(shipment_id: str, current_user = Depends(get_current_user)):
+async def delete_shipment(shipment_id: str, current_user = Depends(require_admin)):
     shipment = await Shipment.find_one(Shipment.shipment_id == shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")

@@ -39,8 +39,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // App now runs without frontend login, so never force a /login redirect.
       localStorage.removeItem('access_token');
+      window.dispatchEvent(new Event('auth:logout'));
     }
     return Promise.reject(error);
   }

@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Package, LayoutDashboard, AlertTriangle, BarChart2, Truck, Settings } from 'lucide-react';
 import { useUIStore } from '../../store/uiStore';
+import { useAuth } from '../../hooks/useAuth';
 
 const Sidebar = () => {
   const sidebarOpen = useUIStore(state => state.sidebarOpen);
   const location = useLocation();
+  const { isAdmin } = useAuth();
 
   const links = [
     { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
@@ -12,8 +14,8 @@ const Sidebar = () => {
     { to: '/alerts', label: 'Alerts', icon: <AlertTriangle size={20} /> },
     { to: '/vehicles', label: 'Fleet', icon: <Truck size={20} /> },
     { to: '/analytics', label: 'Analytics', icon: <BarChart2 size={20} /> },
-    { to: '/settings', label: 'Settings', icon: <Settings size={20} /> },
-  ];
+    isAdmin ? { to: '/settings', label: 'Settings', icon: <Settings size={20} /> } : null,
+  ].filter(Boolean);
 
   return (
     <aside className={`bg-white dark:bg-dark-800 border-r border-gray-200 dark:border-dark-700 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} flex flex-col`}>

@@ -1,7 +1,23 @@
-import { useState, useEffect } from 'react';
+import { createContext, createElement, useContext, useEffect, useMemo, useState } from 'react';
 import api from '../services/api';
 
+const AuthContext = createContext(null);
+
+export const AuthProvider = ({ children }) => {
+  const auth = useAuthState();
+
+  return createElement(AuthContext.Provider, { value: auth }, children);
+};
+
 export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used inside AuthProvider');
+  }
+  return context;
+};
+
+const useAuthState = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +33,16 @@ export const useAuth = () => {
       }
       setLoading(false);
     };
+
+    const handleUnauthorized = () => {
+      setUser(null);
+      setLoading(false);
+    };
+
+    window.addEventListener('auth:logout', handleUnauthorized);
     fetchUser();
+
+    return () => window.removeEventListener('auth:logout', handleUnauthorized);
   }, []);
 
   const login = async (username, password) => {
@@ -27,10 +52,26 @@ export const useAuth = () => {
     setUser(userRes.data);
   };
 
+  const register = async ({ username, email, password }) => {
+    await api.post('/auth/register', { username, email, password });
+    await login(username, password);
+  };
+
   const logout = () => {
     localStorage.removeItem('access_token');
     setUser(null);
   };
 
-  return { user, login, logout, loading };
+  return useMemo(
+    () => ({
+      user,
+      loading,
+      isAuthenticated: Boolean(user),
+      isAdmin: user?.role === 'admin',
+      login,
+      register,
+      logout,
+    }),
+    [user, loading]
+  );
 };
