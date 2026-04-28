@@ -1,7 +1,17 @@
 import axios from 'axios';
 
-// Get base URL from environment or use proxy default
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const DEFAULT_API_BASE_URL = 'http://localhost:8000/api';
+
+const normalizeApiBaseUrl = (rawUrl) => {
+  const url = (rawUrl || DEFAULT_API_BASE_URL).trim().replace(/\/+$/, '');
+  return url.endsWith('/api') ? url : `${url}/api`;
+};
+
+export const getApiBaseUrl = () => normalizeApiBaseUrl(import.meta.env.VITE_API_URL);
+
+export const getSocketBaseUrl = () => getApiBaseUrl().replace(/\/api$/, '');
+
+const baseURL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL,

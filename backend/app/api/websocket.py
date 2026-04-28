@@ -1,7 +1,11 @@
 import socketio
 
+from app.config import settings
+
 # We use an AsyncServer for FastAPI
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
+# Disable Socket.IO's own CORS headers so FastAPI's middleware can be the
+# single source of truth for HTTP polling requests.
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=[])
 sio_app = socketio.ASGIApp(sio, socketio_path='')
 
 @sio.event

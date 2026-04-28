@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAlertStore } from '../store/alertStore';
+import { getSocketBaseUrl } from '../services/api';
 
 export const useWebSocket = () => {
   const socketRef = useRef(null);
@@ -9,10 +10,11 @@ export const useWebSocket = () => {
   const incrementUnread = useAlertStore(state => state.incrementUnread);
 
   useEffect(() => {
-    const URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:8000';
+    const URL = getSocketBaseUrl();
     
     socketRef.current = io(URL, {
       path: '/ws/socket.io',
+      transports: ['websocket'],
       reconnectionDelay: 1000,
       reconnectionDelayMax: 8000,
     });

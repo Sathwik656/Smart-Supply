@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     mlflow_tracking_uri: str = "http://mlflow:5000"
     frontend_url: str = "http://localhost:3000"
 
+    @property
+    def frontend_origins(self) -> list[str]:
+        origins = [origin.strip().rstrip("/") for origin in self.frontend_url.split(",") if origin.strip()]
+        return origins or ["http://localhost:3000"]
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 settings = Settings()

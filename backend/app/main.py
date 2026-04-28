@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import socketio
 
+from app.config import settings
 from app.database import init_db
 from app.api import router as api_router
 from app.api.websocket import sio_app
@@ -30,7 +31,7 @@ app = FastAPI(title="Smart Supply Chain API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.frontend_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
