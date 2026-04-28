@@ -125,6 +125,7 @@ python mock_models.py
 
 ```powershell
 cd ml-training
+python mock_models.py
 python generate_synthetic_data.py
 python train_delay_classifier.py
 python train_eta_forecaster.py

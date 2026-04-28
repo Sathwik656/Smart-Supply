@@ -1,10 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './hooks/useAuth';
-import ProtectedRoute from './components/layout/ProtectedRoute';
 import Sidebar from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
 
-import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ShipmentsPage from './pages/ShipmentsPage';
 import ShipmentDetailPage from './pages/ShipmentDetailPage';
@@ -37,24 +34,11 @@ function AppLayout() {
 }
 
 function App() {
-  const { loading, user } = useAuth();
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading application...</div>;
-  }
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
-        <Route 
-          path="/*" 
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          } 
-        />
+        <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/*" element={<AppLayout />} />
       </Routes>
     </BrowserRouter>
   );

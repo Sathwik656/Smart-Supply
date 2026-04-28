@@ -29,13 +29,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Clear token and redirect to login if unauthorized
+      // App now runs without frontend login, so never force a /login redirect.
       localStorage.removeItem('access_token');
-      // In a real app we might want to trigger a logout event
-      // instead of a hard reload, but for MVP this ensures state is cleared
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
     }
     return Promise.reject(error);
   }
