@@ -1,40 +1,36 @@
 import joblib
 import os
+import sys
 import numpy as np
 
-os.makedirs('models', exist_ok=True)
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+BACKEND_DIR = os.path.join(REPO_ROOT, "backend")
+MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
 
-class MockDelayClassifier:
-    def predict(self, X):
-        return np.zeros(len(X))
-    def predict_proba(self, X):
-        return np.ones((len(X), 2)) * 0.5
+if BACKEND_DIR not in sys.path:
+    sys.path.insert(0, BACKEND_DIR)
 
-class MockProphet:
-    def make_future_dataframe(self, periods):
-        class DfMock:
-            pass
-        return DfMock()
-    def predict(self, df):
-        class ResultMock:
-            yhat = np.array([45.0])
-        return ResultMock()
+from app.ml.mock_models import (  # noqa: E402
+    MockDelayClassifier,
+    MockIsolationForest,
+    MockProphet,
+    MockShapExplainer,
+)
 
-class MockIsolationForest:
-    def predict(self, X):
-        return np.ones(len(X))
 
-class MockShapExplainer:
-    def __call__(self, X):
-        class ShapValues:
-            values = np.random.rand(len(X), 10)
-            feature_names = ['distance_km', 'weather_severity', 'traffic_density', 'driver_fatigue_proxy', 'incidents_on_route', 'warehouse_load_factor', 'historical_delay_rate_for_route', 'time_of_day', 'day_of_week', 'cargo_class_perishable']
-        return ShapValues()
+def main():
+    os.makedirs(MODELS_DIR, exist_ok=True)
 
-# Save mocks
-joblib.dump(MockDelayClassifier(), 'models/delay_classifier.joblib')
-joblib.dump(MockProphet(), 'models/eta_forecaster.joblib')
-joblib.dump(MockIsolationForest(), 'models/anomaly_detector.joblib')
-joblib.dump(MockShapExplainer(), 'models/shap_explainer.joblib')
+    # Ensure NumPy is imported when the mock module is loaded during serialization.
+    _ = np.__version__
 
-print("Mock models generated successfully. The backend will use these for demo purposes to avoid complex dependency compilation.")
+    joblib.dump(MockDelayClassifier(), os.path.join(MODELS_DIR, 'delay_classifier.joblib'))
+    joblib.dump(MockProphet(), os.path.join(MODELS_DIR, 'eta_forecaster.joblib'))
+    joblib.dump(MockIsolationForest(), os.path.join(MODELS_DIR, 'anomaly_detector.joblib'))
+    joblib.dump(MockShapExplainer(), os.path.join(MODELS_DIR, 'shap_explainer.joblib'))
+
+    print("Mock models generated successfully with importable backend classes.")
+
+
+if __name__ == "__main__":
+    main()

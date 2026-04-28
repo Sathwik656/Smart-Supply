@@ -8,6 +8,7 @@ from .routing import router as routing_router
 from .vehicles import router as vehicles_router
 from .analytics import router as analytics_router
 from .gps import router as gps_router
+from .mock import router as mock_router
 
 router = APIRouter()
 router.include_router(auth_router)
@@ -18,3 +19,4 @@ router.include_router(routing_router)
 router.include_router(vehicles_router)
 router.include_router(analytics_router)
 router.include_router(gps_router)
+router.include_router(mock_router)

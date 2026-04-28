@@ -1,22 +1,34 @@
-import { useQuery } from '@tanstack/react-query';
-import api from '../../services/api';
-import { Package, Activity, AlertTriangle, Clock } from 'lucide-react';
+import { useMockDashboardStats } from '../../hooks/useMockData';
+import { Package, Activity, AlertTriangle, Clock, Truck, CheckCircle } from 'lucide-react';
 
 const KPICards = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ['analytics_summary'],
-    queryFn: async () => {
-      const res = await api.get('/analytics/summary');
-      return res.data;
-    },
-    refetchInterval: 60000,
-  });
+  const { data, isLoading } = useMockDashboardStats();
 
   const cards = [
-    { title: 'On-Time Rate', value: data?.on_time_rate ? `${data.on_time_rate}%` : '---', icon: <Activity className="text-green-500" />, color: 'bg-green-100 dark:bg-green-900/30' },
-    { title: 'Active Shipments', value: data?.active_shipments || '---', icon: <Package className="text-blue-500" />, color: 'bg-blue-100 dark:bg-blue-900/30' },
-    { title: 'Open Alerts', value: data?.open_alerts || '---', icon: <AlertTriangle className="text-red-500" />, color: 'bg-red-100 dark:bg-red-900/30' },
-    { title: 'Avg Delay (Min)', value: data?.avg_delay_minutes || '---', icon: <Clock className="text-orange-500" />, color: 'bg-orange-100 dark:bg-orange-900/30' },
+    { 
+      title: 'On-Time Rate', 
+      value: data?.on_time_rate ? `${data.on_time_rate}%` : '---', 
+      icon: <Activity className="text-green-500" />, 
+      color: 'bg-green-100 dark:bg-green-900/30' 
+    },
+    { 
+      title: 'Active Shipments', 
+      value: data?.active_shipments || '---', 
+      icon: <Package className="text-blue-500" />, 
+      color: 'bg-blue-100 dark:bg-blue-900/30' 
+    },
+    { 
+      title: 'Pending Alerts', 
+      value: data?.pending_alerts || '---', 
+      icon: <AlertTriangle className="text-red-500" />, 
+      color: 'bg-red-100 dark:bg-red-900/30' 
+    },
+    { 
+      title: 'Active Vehicles', 
+      value: data?.active_vehicles || '---', 
+      icon: <Truck className="text-brand-500" />, 
+      color: 'bg-brand-100 dark:bg-brand-900/30' 
+    },
   ];
 
   return (

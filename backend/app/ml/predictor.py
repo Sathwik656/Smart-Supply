@@ -6,31 +6,41 @@ from typing import Tuple, List, Dict, Any
 
 from app.models.shipment import Shipment, SHAPFactor
 from app.ml.features import compute_features
+from app.ml.mock_models import (
+    MockDelayClassifier,
+    MockIsolationForest,
+    MockProphet,
+    MockShapExplainer,
+)
 
 _classifiers = {}
+_MODEL_FALLBACKS = {
+    'delay_classifier': MockDelayClassifier,
+    'eta_forecaster': MockProphet,
+    'anomaly_detector': MockIsolationForest,
+    'shap_explainer': MockShapExplainer,
+}
+
+
+def _load_model(models_dir: str, model_name: str):
+    model_path = os.path.join(models_dir, f'{model_name}.joblib')
+    try:
+        model = joblib.load(model_path)
+        print(f"Loaded {model_name} from {model_path}")
+        return model
+    except Exception as e:
+        fallback_factory = _MODEL_FALLBACKS.get(model_name)
+        if fallback_factory is None:
+            raise
+        print(f"Failed to load {model_name}: {e}. Falling back to in-memory mock model.")
+        return fallback_factory()
 
 async def load_models():
     models_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../ml-training/models"))
-    
-    try:
-        _classifiers['delay_classifier'] = joblib.load(os.path.join(models_dir, 'delay_classifier.joblib'))
-    except Exception as e:
-        print(f"Failed to load delay_classifier: {e}")
-        
-    try:
-        _classifiers['eta_forecaster'] = joblib.load(os.path.join(models_dir, 'eta_forecaster.joblib'))
-    except Exception:
-        pass
-        
-    try:
-        _classifiers['anomaly_detector'] = joblib.load(os.path.join(models_dir, 'anomaly_detector.joblib'))
-    except Exception:
-        pass
-        
-    try:
-        _classifiers['shap_explainer'] = joblib.load(os.path.join(models_dir, 'shap_explainer.joblib'))
-    except Exception:
-        pass
+
+    for model_name in _MODEL_FALLBACKS:
+        _classifiers[model_name] = _load_model(models_dir, model_name)
+
     print("Models loaded into predictor.")
 
 def _run_prediction_sync(shipment_doc: Shipment, raw_data: dict) -> Tuple[float, bool, Any, bool, List[SHAPFactor]]:
